@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShowCoords.Services;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,7 +15,7 @@ namespace ShowCoords
             InitializeComponent();
             Topmost = true;            
             MouseDown += Window_MouseDown;
-            DataContext = new CoordsViewModel();        
+            DataContext = new CoordsViewModel(new NetherCoordsEvaluator(8));        
         }        
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
