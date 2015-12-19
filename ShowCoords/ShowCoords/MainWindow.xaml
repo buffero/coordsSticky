@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ShowCoords"
         xmlns:utility="clr-namespace:ShowCoords.Utility"        
         mc:Ignorable="d"
-        Title="MainWindow" Name="mainWindow" WindowStyle="None" SizeToContent="WidthAndHeight"> 
+        Title="MainWindow" Name="mainWindow" WindowStyle="None" SizeToContent="WidthAndHeight" ResizeMode="NoResize"> 
     <Window.Resources>
         <ResourceDictionary>           
             <utility:BoolToVisibilityConverter x:Key="VisibilityConverter"/>
