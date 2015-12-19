@@ -4,15 +4,40 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShowCoords"
-        xmlns:utility="clr-namespace:ShowCoords.Utility"
+        xmlns:utility="clr-namespace:ShowCoords.Utility"        
         mc:Ignorable="d"
-        Title="MainWindow" Height="60" Width="230" WindowStyle="None">
+        Title="MainWindow" Name="mainWindow" WindowStyle="None" SizeToContent="WidthAndHeight"> 
     <Window.Resources>
-        <ResourceDictionary>
+        <ResourceDictionary>           
             <utility:BoolToVisibilityConverter x:Key="VisibilityConverter"/>
-        </ResourceDictionary>
+            <Style x:Key="WaterMarkTextBox" TargetType="{x:Type TextBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TextBox}">
+                            <Grid>
+                                <Border Background="White" BorderBrush="#FF7D8683" BorderThickness="1"/>
+                                <ScrollViewer x:Name="PART_ContentHost" Margin="5,0,0,0" VerticalAlignment="Center" />
+                                <Label Margin="5,0,0,0" x:Name="WaterMarkLabel" Content="{TemplateBinding Tag}" VerticalAlignment="Center"
+                               Visibility="Collapsed" Foreground="Gray" FontFamily="Arial"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Text" Value=""/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Visibility" TargetName="WaterMarkLabel" Value="Visible"/>
+                                </MultiTrigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="DimGray"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>        
     </Window.Resources>
-    <Grid VerticalAlignment="Center">
+    <Grid Name="mainGrid" VerticalAlignment="Center">        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
@@ -23,18 +48,20 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBox Height="24" Text="{Binding DisplayedCoords.CoordsX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1"/>
-        <TextBox Height="24" Text="{Binding DisplayedCoords.CoordsZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1" Grid.Column="1"/>
-        <TextBox Grid.Row="1" Text="{Binding DisplayedCoords.NetherCoordsX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1" Height="24"/>
-        <TextBox Grid.Row="1" Text="{Binding DisplayedCoords.NetherCoordsZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1" Height="24" Grid.Column="1"/>
+        <TextBox Style="{StaticResource WaterMarkTextBox}" Tag="X" Height="24" Text="{Binding DisplayedCoords.CoordsX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1"/>
+        <TextBox Style="{StaticResource WaterMarkTextBox}" Tag="Z" Height="24" Text="{Binding DisplayedCoords.CoordsZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1" Grid.Column="1"/>
+        <TextBox Style="{StaticResource WaterMarkTextBox}" Tag="NX" Grid.Row="1" Text="{Binding DisplayedCoords.NetherCoordsX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1" Height="24"/>
+        <TextBox Style="{StaticResource WaterMarkTextBox}" Tag="NZ" Grid.Row="1" Text="{Binding DisplayedCoords.NetherCoordsZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1" Height="24" Grid.Column="1"/>
         <Button Grid.Column="2" Content="Q" Command="{Binding QuitAppCommand}"/>
         <Button Grid.Column="2" Grid.Row="1" Content="V" Command="{Binding ExtendPanelCommand}"/>
-        <StackPanel Visibility="{Binding IsExtendedUiVisible, Converter={StaticResource VisibilityConverter}}" Grid.Row="2" >
-        <DataGrid ItemsSource="{Binding CoordsList}">
+        <StackPanel Visibility="{Binding IsExtendedUiVisible, Converter={StaticResource VisibilityConverter}}" Grid.Row="2" Grid.ColumnSpan="3" >
+            <DataGrid SelectedItem="{Binding DisplayedCoords, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding CoordsList}" CanUserReorderColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding CoordsX, UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Binding="{Binding CoordsZ, UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Binding="{Binding Desc, UpdateSourceTrigger=PropertyChanged}"/>                
+                <DataGridTextColumn Header="X" Binding="{Binding CoordsX, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
+                    <DataGridTextColumn Header="Z" Binding="{Binding CoordsZ, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
+                    <DataGridTextColumn Header="NX" Binding="{Binding NetherCoordsX, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
+                    <DataGridTextColumn Header="NZ" Binding="{Binding NetherCoordsZ, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>
+                    <DataGridTextColumn Header="Desc" Binding="{Binding Desc, UpdateSourceTrigger=PropertyChanged}" MinWidth="100"/>                
             </DataGrid.Columns>
         </DataGrid>
         </StackPanel>

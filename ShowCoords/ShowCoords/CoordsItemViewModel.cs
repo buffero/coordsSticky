@@ -86,6 +86,17 @@ namespace ShowCoords
 
                 _manualEntry = false;
             }
-        }                
+        }
+
+        private string _desc;
+        public string Desc
+        {
+            get { return _desc; }
+            set
+            {
+                _desc = value;
+                NotifyPropertyChanged("Desc");
+            }
+        }
     }
 }

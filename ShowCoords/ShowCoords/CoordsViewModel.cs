@@ -1,18 +1,34 @@
 ﻿using ShowCoords.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ShowCoords
 {
     internal class CoordsViewModel : ViewModelBase
     {
+        private readonly INetherCoordsEvaluator _coordsEvaluator;
+
         public CoordsViewModel(INetherCoordsEvaluator coordsEvaluator)
         {
+            _coordsEvaluator = coordsEvaluator;
             IsExtendedUiVisible = false;
             QuitAppCommand = new RelayCommand(QuitAppExecute, () => true);
             ExtendPanelCommand = new RelayCommand(ExtendPanel, () => true);
             DisplayedCoords = new CoordsItemViewModel(coordsEvaluator);
-        }        
+            CoordsList = new ObservableCollection<CoordsItemViewModel>(PrepareCoordsList());
+            PrepareCoordsList();
+        }
+
+        private IEnumerable<CoordsItemViewModel> PrepareCoordsList()
+        {
+            var count = System.Configuration.ConfigurationSettings.AppSettings["NumberOfInitialItems"].ToString();
+            var numberOfItems = int.Parse(count);
+            return Enumerable.Range(1, numberOfItems).Select(p => new CoordsItemViewModel(_coordsEvaluator));
+        }
 
         public ICommand QuitAppCommand
         {

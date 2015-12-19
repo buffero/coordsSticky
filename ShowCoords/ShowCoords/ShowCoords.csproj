@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CoordsItemViewModel.cs" />
+    <Compile Include="IConfigReader.cs" />
     <Compile Include="Services\INetherCoordsEvaluator.cs" />
     <Compile Include="Services\NetherCoordsEvaluator.cs" />
     <Compile Include="Utility\BoolToVisibilityConverter.cs" />
