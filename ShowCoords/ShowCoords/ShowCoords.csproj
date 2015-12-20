@@ -56,9 +56,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CoordsItemViewModel.cs" />
-    <Compile Include="IConfigReader.cs" />
+    <Compile Include="Services\ICanSerialize.cs" />
+    <Compile Include="Services\CoordsPersistanceService.cs" />
+    <Compile Include="Services\ICoordsCollectionPersistanceService.cs" />
     <Compile Include="Services\INetherCoordsEvaluator.cs" />
     <Compile Include="Services\NetherCoordsEvaluator.cs" />
+    <Compile Include="Services\SerializableContainer.cs" />
     <Compile Include="Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="Utility\RelayCommand.cs" />
     <Compile Include="ViewModelBase.cs" />

@@ -1,9 +1,7 @@
 ﻿using ShowCoords.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ShowCoords
@@ -11,23 +9,27 @@ namespace ShowCoords
     internal class CoordsViewModel : ViewModelBase
     {
         private readonly INetherCoordsEvaluator _coordsEvaluator;
+        private readonly ICoordsCollectionPersistanceService<CoordsItemViewModel> _persistanceService;
 
-        public CoordsViewModel(INetherCoordsEvaluator coordsEvaluator)
-        {
+        public CoordsViewModel(INetherCoordsEvaluator coordsEvaluator, ICoordsCollectionPersistanceService<CoordsItemViewModel> persistanceService)
+        {            
+            _persistanceService = persistanceService;
             _coordsEvaluator = coordsEvaluator;
             IsExtendedUiVisible = false;
             QuitAppCommand = new RelayCommand(QuitAppExecute, () => true);
             ExtendPanelCommand = new RelayCommand(ExtendPanel, () => true);
             DisplayedCoords = new CoordsItemViewModel(coordsEvaluator);
             CoordsList = new ObservableCollection<CoordsItemViewModel>(PrepareCoordsList());
-            PrepareCoordsList();
+            DisplayedCoords = CoordsList.First();            
         }
 
         private IEnumerable<CoordsItemViewModel> PrepareCoordsList()
         {
             var count = System.Configuration.ConfigurationSettings.AppSettings["NumberOfInitialItems"].ToString();
             var numberOfItems = int.Parse(count);
-            return Enumerable.Range(1, numberOfItems).Select(p => new CoordsItemViewModel(_coordsEvaluator));
+            var persistedCoords = _persistanceService.LoadFromFile();
+
+            return Enumerable.Range(1, numberOfItems).Select(p => persistedCoords != null &&  p - 1 < persistedCoords.Count() ? persistedCoords.ElementAt(p - 1) : new CoordsItemViewModel(_coordsEvaluator));
         }
 
         public ICommand QuitAppCommand
@@ -50,6 +52,7 @@ namespace ShowCoords
 
         private void QuitAppExecute()
         {
+            _persistanceService.PersistToFile(CoordsList);
             App.Current.Shutdown();
         }
 

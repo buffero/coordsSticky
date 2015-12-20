@@ -13,8 +13,15 @@ namespace ShowCoords
             Topmost = true;                        
             PreviewMouseLeftButtonDown += Window_MouseDown;
             PreviewMouseMove += MainWindow_PreviewMouseMove;
-            DataContext = new CoordsViewModel(new NetherCoordsEvaluator(8));        
+            PoorMansDependencyInjection();
         }        
+
+        public void PoorMansDependencyInjection()
+        {
+            var netherMultiplier = System.Configuration.ConfigurationSettings.AppSettings["NetherCoordsMultiplier"].ToString();
+            var multiplier = int.Parse(netherMultiplier);
+            DataContext = new CoordsViewModel(new NetherCoordsEvaluator(multiplier), new CoordsPersistanceService<CoordsItemViewModel>());
+        }
 
         private void MainWindow_PreviewMouseMove(object sender, MouseEventArgs e)
         {

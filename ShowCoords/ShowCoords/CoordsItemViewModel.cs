@@ -1,20 +1,28 @@
 ﻿using ShowCoords.Services;
+using System;
+using System.Xml.Serialization;
 
 namespace ShowCoords
-{
-    public class CoordsItemViewModel : ViewModelBase
+{    
+    [Serializable]
+    public class CoordsItemViewModel : ViewModelBase, ICanSerialize
     {
-        private readonly INetherCoordsEvaluator _coordsEvaluator;
+        private readonly INetherCoordsEvaluator _coordsEvaluator;        
+        private const int DefaultMultiplier = 8;
+        private bool _manualEntry = false;
+
+        private CoordsItemViewModel()
+        {
+            _coordsEvaluator = new NetherCoordsEvaluator(DefaultMultiplier);
+        }
 
         public CoordsItemViewModel(INetherCoordsEvaluator coordsEvaluator)
         {
-            _coordsEvaluator = coordsEvaluator;
+            _coordsEvaluator = coordsEvaluator;            
         } 
 
-        private const decimal Multiplier = 8;
-        private bool _manualEntry = false;
-
         private string _coordsX;
+        [XmlAttribute(AttributeName = "CoordsX")]
         public string CoordsX
         {
             get { return _coordsX; }
@@ -33,6 +41,7 @@ namespace ShowCoords
         }
 
         private string _coordsZ;
+        [XmlAttribute(AttributeName = "CoordsZ")]
         public string CoordsZ
         {
             get { return _coordsZ; }
@@ -52,6 +61,7 @@ namespace ShowCoords
         }
 
         private string _netherCoordsX;
+        [XmlIgnore]
         public string NetherCoordsX
         {
             get { return _netherCoordsX; }
@@ -70,6 +80,7 @@ namespace ShowCoords
         }
 
         private string _nethercoordsZ;
+        [XmlIgnore]
         public string NetherCoordsZ
         {
             get { return _nethercoordsZ; }
@@ -89,6 +100,7 @@ namespace ShowCoords
         }
 
         private string _desc;
+        [XmlAttribute(AttributeName = "Desc")]
         public string Desc
         {
             get { return _desc; }
@@ -97,6 +109,11 @@ namespace ShowCoords
                 _desc = value;
                 NotifyPropertyChanged("Desc");
             }
+        }
+
+        public bool CanSerialize()
+        {
+            return !string.IsNullOrEmpty(CoordsX) && !string.IsNullOrEmpty(CoordsZ);
         }
     }
 }
